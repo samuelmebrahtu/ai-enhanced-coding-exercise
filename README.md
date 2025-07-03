@@ -15,7 +15,6 @@ A TypeScript React application that extracts flashcards from Wikipedia articles 
 
 - Node.js (v14 or higher)
 - npm (v6 or higher)
-- OpenAI API key
 
 ## Installation
 
@@ -87,10 +86,9 @@ The application supports testing with mock responses:
 
 To test the proxy server independently:
 
-1. Start the proxy server:
+1. Start the development server which will automatically start with the frontend:
    ```
-   cd server
-   node proxy-server.js
+   npm run dev
    ```
 
 2. Test the health endpoint:
@@ -120,11 +118,6 @@ The application includes a fast mock mode for development and testing:
 - **How to use**: Toggle the "Fast Mock Mode" switch in the interface before generating flashcards
 - **Persistence**: Your mock mode preference is saved between sessions
 
-This feature is particularly useful for:
-- Development and testing without consuming API credits
-- Working offline
-- Getting consistent flashcard results for demos
-
 ## Technologies Used
 
 - React
@@ -132,7 +125,3 @@ This feature is particularly useful for:
 - OpenAI API
 - Jest for testing
 - Webpack for bundling
-
-## License
-
-MIT
