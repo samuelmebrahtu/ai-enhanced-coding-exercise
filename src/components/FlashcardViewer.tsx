@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FlashcardSet, Flashcard } from '../types';
-import './FlashcardViewer.css';
+import '../styles/FlashcardViewer.css';
 
 interface FlashcardViewerProps {
   flashcardSet: FlashcardSet;

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { FlashcardSet, InputType } from './types';
 import InputForm from './components/InputForm';
 import FlashcardViewer from './components/FlashcardViewer';
-import './App.css';
+import './styles/App.css';
 
 const App: React.FC = () => {
   const [flashcardSet, setFlashcardSet] = useState<FlashcardSet | null>(null);

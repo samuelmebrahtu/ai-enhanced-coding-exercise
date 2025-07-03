@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { extractFlashcards } from '../services/openaiService';
 import { fetchWikipediaContent } from '../services/wikipediaService';
 import { FlashcardSet } from '../types';
 import { getLLMConfig } from '../config';
-import './InputForm.css';
+import { MockModeToggle } from './MockModeToggle';
+import '../styles/InputForm.css';
 
 interface InputFormProps {
   setFlashcardSet: React.Dispatch<React.SetStateAction<FlashcardSet | null>>;
@@ -14,6 +15,14 @@ interface InputFormProps {
 const InputForm: React.FC<InputFormProps> = ({ setFlashcardSet, setLoading, setError }) => {
   const [isUrlInput, setIsUrlInput] = useState(true);
   const [input, setInput] = useState('');
+  const [useMockMode, setUseMockMode] = useState(false);
+  
+  useEffect(() => {
+    const savedSetting = localStorage.getItem('use_mock_mode');
+    if (savedSetting) {
+      setUseMockMode(savedSetting === 'true');
+    }
+  }, []);
 
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -50,7 +59,7 @@ const InputForm: React.FC<InputFormProps> = ({ setFlashcardSet, setLoading, setE
         source = input;
       }
 
-      const flashcards = await extractFlashcards(content);
+      const flashcards = await extractFlashcards(content, undefined, useMockMode);
 
       setFlashcardSet({
         title: isUrlInput ? extractTitleFromUrl(input) : 'Custom Text Flashcards',
@@ -122,6 +131,8 @@ const InputForm: React.FC<InputFormProps> = ({ setFlashcardSet, setLoading, setE
           />
         </div>
 
+        <MockModeToggle onChange={setUseMockMode} />
+        
         <button className="submit-button" type="submit">Generate Flashcards</button>
       </form>
     </div>

@@ -24,7 +24,8 @@ interface ChatCompletionResponse {
 
 export const extractFlashcards = async (
   content: string,
-  apiKey?: string
+  apiKey?: string,
+  useMock: boolean = false
 ): Promise<Flashcard[]> => {
   const config = getLLMConfig();
   try {
@@ -79,9 +80,12 @@ export const extractFlashcards = async (
       const requestBodyString = JSON.stringify(requestBody);
       console.log('Final request body string:', requestBodyString);
       
-      const response = await fetch(`${baseURL}/chat/completions`, {
+      const url = `${baseURL}/chat/completions${useMock ? '?mock=true' : ''}`;
+      console.log(`Making request to: ${url} ${useMock ? '(MOCK MODE)' : ''}`)
+      
+      const response = await fetch(url, {
         method: 'POST',
-        headers: headers,
+        headers: useMock ? { ...headers, 'X-Use-Mock': 'true' } : headers,
         body: requestBodyString
       });
       
