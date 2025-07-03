@@ -6,8 +6,8 @@ export interface LLMConfig {
 
 export const getLLMConfig = (): LLMConfig => {
   return {
-    baseUrl: process.env.INFERENCE_SERVER_URL as string,
-    model: process.env.MODEL_NAME as string,
-    defaultApiKey: process.env.LLM_API_KEY as string // Compatible with both OpenAI and LMStudio
+    baseUrl: process.env.INFERENCE_SERVER_URL || 'http://localhost:1234/v1',
+    model: process.env.MODEL_NAME || 'llama-3.2-1b-instruct',
+    defaultApiKey: process.env.LLM_API_KEY || ''
   }
 }

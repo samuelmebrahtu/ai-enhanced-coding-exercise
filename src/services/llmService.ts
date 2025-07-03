@@ -31,6 +31,9 @@ export const extractFlashcards = async (
 ): Promise<Flashcard[]> => {
   const config = getLLMConfig();
   try {
+    if (!config.baseUrl) {
+      throw new Error('API base URL is not configured. Please check your environment variables.');
+    }
     const isProxyRequired = needsCORSproxy(config.baseUrl);
     const apiKeyToUse = isProxyRequired ? 
       (apiKey || config.defaultApiKey || 'not-needed') : 
@@ -133,8 +136,11 @@ const truncateContent = (content: string, maxLength: number): string => {
 };
 
 const needsCORSproxy = (url: string): boolean => {
-  const parsedUrl = new URL(url);
-  const hostname = parsedUrl.hostname.toLowerCase();
-
-  return hostname === 'localhost' || hostname === '127.0.0.1';
+  try {
+    const parsedUrl = new URL(url);
+    const hostname = parsedUrl.hostname.toLowerCase();
+    return hostname === 'localhost' || hostname === '127.0.0.1';
+  } catch (error) {
+    return false;
+  }
 };
