@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FlashcardSet, InputType } from './types';
+import { FlashcardSet } from './types';
 import InputForm from './components/InputForm';
 import FlashcardViewer from './components/FlashcardViewer';
 import './styles/App.css';
