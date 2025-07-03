@@ -23,7 +23,7 @@ try {
   console.log('Mock data loaded successfully from flashcard_mock.json');
 } catch (error) {
   console.error('Error loading mock data:', error);
-  mockFlashcardResponse = { choices: [{ message: { content: JSON.stringify({ flashcards: [] }) } }] };
+  mockFlashcardResponse = { choices: [{ message: { content: { flashcards: [] } } }] };
 }
 
 const isMockMode = (req) => {
@@ -49,6 +49,41 @@ const inferenceProxy = createProxyMiddleware({
   },
   onProxyRes: (proxyRes, req, res) => {
     console.log('Received response from inference server:', proxyRes.statusCode);
+    
+    // Handle response data to ensure content is a valid JSON string
+    if (req.url.includes('/chat/completions')) {
+      const originalBody = [];
+      proxyRes.on('data', (chunk) => {
+        originalBody.push(chunk);
+      });
+      
+      proxyRes.on('end', () => {
+        try {
+          const bodyString = Buffer.concat(originalBody).toString();
+          const bodyJson = JSON.parse(bodyString);
+          
+          // Check if content is an object and convert it to a string if needed
+          if (bodyJson.choices && bodyJson.choices[0] && bodyJson.choices[0].message) {
+            const content = bodyJson.choices[0].message.content;
+            
+            // If content is an object, stringify it
+            if (content && typeof content === 'object') {
+              bodyJson.choices[0].message.content = JSON.stringify(content);
+              
+              // Replace the response with our modified version
+              const modifiedBody = JSON.stringify(bodyJson);
+              res.setHeader('content-length', Buffer.byteLength(modifiedBody));
+              res.end(modifiedBody);
+              console.log('Modified response to ensure content is a valid JSON string');
+              return;
+            }
+          }
+        } catch (error) {
+          console.error('Error processing proxy response:', error);
+          // Continue with original response if there's an error
+        }
+      });
+    }
   },
   onError: (err, req, res) => {
     console.error('Proxy error:', err);
