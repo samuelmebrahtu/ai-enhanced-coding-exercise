@@ -53,11 +53,55 @@ The build files will be in the `dist` directory.
 
 ## Testing
 
-Run the test suite:
+The application includes comprehensive tests for components, services, and utilities.
+
+### Running Tests
+
+Run the complete test suite:
 
 ```
 npm test
 ```
+
+Run tests with coverage report:
+
+```
+npm test -- --coverage
+```
+
+Run a specific test file:
+
+```
+npm test -- tests/services/llmService.test.ts
+```
+
+### Testing with Mock Mode
+
+The application supports testing with mock responses:
+
+1. **Unit Tests**: The test suite uses Jest mocks to simulate API responses
+2. **Manual Testing**: Enable the "Fast Mock Mode" toggle in the UI to use pre-defined responses
+3. **API Testing**: Send requests to the proxy server with `?mock=true` query parameter or `X-Use-Mock: true` header
+
+### Proxy Server Testing
+
+To test the proxy server independently:
+
+1. Start the proxy server:
+   ```
+   cd server
+   node proxy-server.js
+   ```
+
+2. Test the health endpoint:
+   ```
+   curl http://localhost:3001/health
+   ```
+
+3. Test with mock mode:
+   ```
+   curl "http://localhost:3001/api/v1/chat/completions?mock=true"
+   ```
 
 ## Usage
 
