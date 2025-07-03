@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { extractFlashcards } from '../services/openaiService';
 import { fetchWikipediaContent } from '../services/wikipediaService';
 import { FlashcardSet } from '../types';
 import { getLLMConfig } from '../config';
-import { LLMConfigForm } from './LLMConfigForm';
 import './InputForm.css';
 
 interface InputFormProps {
@@ -16,9 +15,6 @@ const InputForm: React.FC<InputFormProps> = ({ setFlashcardSet, setLoading, setE
   const [isUrlInput, setIsUrlInput] = useState(true);
   const [input, setInput] = useState('');
 
-  const handleConfigSaved = () => {
-    // Refresh when config is saved
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,7 +27,6 @@ const InputForm: React.FC<InputFormProps> = ({ setFlashcardSet, setLoading, setE
 
     const config = getLLMConfig();
     
-    // Only require API key for OpenAI API, not for local endpoints like LMStudio
     if (config.baseUrl.includes('openai.com') && (!config.defaultApiKey || !config.defaultApiKey.trim())) {
       setError('Please set your API key in LLM Settings');
       return;
@@ -126,8 +121,6 @@ const InputForm: React.FC<InputFormProps> = ({ setFlashcardSet, setLoading, setE
             rows={isUrlInput ? 1 : 10}
           />
         </div>
-
-        <LLMConfigForm onConfigSaved={handleConfigSaved} />
 
         <button className="submit-button" type="submit">Generate Flashcards</button>
       </form>

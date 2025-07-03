@@ -1,5 +1,7 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const webpack = require('webpack');
+require('dotenv').config();
 
 module.exports = {
   entry: './src/index.tsx',
@@ -26,6 +28,11 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       template: './public/index.html',
+    }),
+    new webpack.DefinePlugin({
+      'process.env.INFERENCE_SERVER_URL': JSON.stringify(process.env.INFERENCE_SERVER_URL || 'https://api.openai.com/v1'),
+      'process.env.MODEL_NAME': JSON.stringify(process.env.MODEL_NAME || 'gpt-3.5-turbo-1106'),
+      'process.env.OPENAI_API_KEY': JSON.stringify(process.env.OPENAI_API_KEY || ''),
     }),
   ],
   devServer: {

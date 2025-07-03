@@ -23,12 +23,22 @@ A TypeScript React application that extracts flashcards from Wikipedia articles 
    npm install
    ```
 
-2. Start the development server:
-   ```
-   npm start
-   ```
+2. Set up environment variables:
+   - Copy `template.env` to `.env`
+   - Fill in the required environment variables:
+     ```
+     INFERENCE_SERVER_URL=https://api.openai.com/v1
+     MODEL_NAME=gpt-3.5-turbo-1106
+     OPENAI_API_KEY=your_api_key_here
+     ```
 
-3. Open your browser and navigate to `http://localhost:3000`
+3. Start the development server:
+   ```
+   npm run dev
+   ```
+   This will start both the main application and the proxy server in a single command.
+
+4. Open your browser and navigate to `http://localhost:8080` (opens automatically)
 
 ## Building for Production
 
@@ -51,10 +61,9 @@ npm test
 ## Usage
 
 1. Choose between entering a Wikipedia URL or custom text
-2. Enter your OpenAI API key (this is not stored and only used for the current session)
-3. Click "Generate Flashcards"
-4. View your flashcards in card view (flip cards to see answers) or list view
-5. Export your flashcards as CSV or JSON for use in other applications
+2. Click "Generate Flashcards"
+3. View your flashcards in card view (flip cards to see answers) or list view
+4. Export your flashcards as CSV or JSON for use in other applications
 
 ## Technologies Used
 

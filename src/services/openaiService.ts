@@ -40,7 +40,7 @@ export const extractFlashcards = async (
       console.log('Using proxy server for LMStudio:', baseURL);
     }
     
-    const truncatedContent = truncateContent(content, 15000);
+    const truncatedContent = truncateContent(content, 3000);
 
     const messages: ChatMessage[] = [
       {

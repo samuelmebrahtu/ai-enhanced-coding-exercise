@@ -1,31 +1,13 @@
 export interface LLMConfig {
   baseUrl: string
   model: string
-  defaultApiKey?: string
-}
-
-export const defaultConfig: LLMConfig = {
-  baseUrl: 'https://api.openai.com/v1',
-  model: 'gpt-3.5-turbo-1106'
+  defaultApiKey: string
 }
 
 export const getLLMConfig = (): LLMConfig => {
-  try {
-    const storedConfig = localStorage.getItem('llm_config')
-    if (storedConfig) {
-      return JSON.parse(storedConfig) as LLMConfig
-    }
-  } catch (error) {
-    console.error('Error loading LLM config:', error)
-  }
-  
-  return defaultConfig
-}
-
-export const saveLLMConfig = (config: LLMConfig): void => {
-  try {
-    localStorage.setItem('llm_config', JSON.stringify(config))
-  } catch (error) {
-    console.error('Error saving LLM config:', error)
+  return {
+    baseUrl: process.env.INFERENCE_SERVER_URL as string,
+    model: process.env.MODEL_NAME as string,
+    defaultApiKey: process.env.OPENAI_API_KEY as string
   }
 }
