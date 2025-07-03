@@ -33,12 +33,12 @@ export const MockModeToggle: React.FC<MockModeToggleProps> = ({ onChange }) => {
         <span className="toggle-slider"></span>
       </label>
       <span className="toggle-label">
-        {useMock ? '🚀 Fast Mock Mode' : '🌐 Real API Mode'}
+        {useMock ? '🚀 Fast Mock Mode' : '🤖 Real LLM Mode'}
       </span>
       <div className="toggle-tooltip">
         {useMock 
           ? 'Using mock responses (fast, no API calls)' 
-          : 'Using real API calls (may be slower)'}
+          : 'Using real AI calls (will be slower)'}
       </div>
     </div>
   );

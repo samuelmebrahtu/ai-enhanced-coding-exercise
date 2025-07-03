@@ -66,7 +66,9 @@ const FlashcardViewer: React.FC<FlashcardViewerProps> = ({ flashcardSet, onReset
     document.body.removeChild(link);
   };
 
-  const currentCard = flashcardSet.cards[currentIndex];
+  // Handle empty flashcard sets
+  const hasCards = flashcardSet.cards && flashcardSet.cards.length > 0;
+  const currentCard = hasCards ? flashcardSet.cards[currentIndex] : null;
 
   return (
     <div className="flashcard-viewer">
@@ -95,32 +97,38 @@ const FlashcardViewer: React.FC<FlashcardViewerProps> = ({ flashcardSet, onReset
 
       {viewMode === 'cards' ? (
         <div className="card-view">
-          <div className={`flashcard ${flipped ? 'flipped' : ''}`} onClick={handleFlip}>
-            <div className="flashcard-inner">
-              <div className="flashcard-front">
-                <p>{currentCard.question}</p>
-                <small>Click to reveal answer</small>
-              </div>
-              <div className="flashcard-back">
-                <p>{currentCard.answer}</p>
-                <small>Click to see question</small>
+          {hasCards ? (
+            <div className={`flashcard ${flipped ? 'flipped' : ''}`} onClick={handleFlip}>
+              <div className="flashcard-inner">
+                <div className="flashcard-front">
+                  <p>{currentCard?.question}</p>
+                  <small>Click to reveal answer</small>
+                </div>
+                <div className="flashcard-back">
+                  <p>{currentCard?.answer}</p>
+                  <small>Click to see question</small>
+                </div>
               </div>
             </div>
-          </div>
+          ) : (
+            <div className="empty-flashcard">
+              <p>No flashcards available</p>
+            </div>
+          )}
 
           <div className="card-navigation">
             <button 
               onClick={handlePrevious} 
-              disabled={currentIndex === 0}
+              disabled={!hasCards || currentIndex === 0}
             >
               Previous
             </button>
             <span className="card-counter">
-              {currentIndex + 1} / {flashcardSet.cards.length}
+              {hasCards ? `${currentIndex + 1} / ${flashcardSet.cards.length}` : '0 / 0'}
             </span>
             <button 
               onClick={handleNext} 
-              disabled={currentIndex === flashcardSet.cards.length - 1}
+              disabled={!hasCards || currentIndex === flashcardSet.cards.length - 1}
             >
               Next
             </button>
@@ -137,13 +145,19 @@ const FlashcardViewer: React.FC<FlashcardViewerProps> = ({ flashcardSet, onReset
               </tr>
             </thead>
             <tbody>
-              {flashcardSet.cards.map((card, index) => (
-                <tr key={card.id}>
-                  <td>{index + 1}</td>
-                  <td>{card.question}</td>
-                  <td>{card.answer}</td>
+              {hasCards ? (
+                flashcardSet.cards.map((card, index) => (
+                  <tr key={card.id}>
+                    <td>{index + 1}</td>
+                    <td>{card.question}</td>
+                    <td>{card.answer}</td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={3} style={{ textAlign: 'center' }}>No flashcards available</td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </div>
