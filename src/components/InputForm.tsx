@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { extractFlashcards } from '../services/openaiService';
+import { extractFlashcards } from '../services/llmService';
 import { fetchWikipediaContent } from '../services/wikipediaService';
 import { FlashcardSet } from '../types';
 import { getLLMConfig } from '../config';
@@ -36,7 +36,7 @@ const InputForm: React.FC<InputFormProps> = ({ setFlashcardSet, setLoading, setE
 
     const config = getLLMConfig();
     
-    if (config.baseUrl.includes('openai.com') && (!config.defaultApiKey || !config.defaultApiKey.trim())) {
+    if (!config.defaultApiKey || !config.defaultApiKey.trim()) {
       setError('Please set your API key in LLM Settings');
       return;
     }
