@@ -20,6 +20,8 @@ describe('FlashcardViewer Component', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
+  
+
 
   test('renders flashcard set title and source', () => {
     render(<FlashcardViewer flashcardSet={mockFlashcardSet} onReset={mockOnReset} />);
@@ -101,5 +103,32 @@ describe('FlashcardViewer Component', () => {
     fireEvent.click(resetButton);
     
     expect(mockOnReset).toHaveBeenCalled();
+  });
+
+  test('renders action buttons section with export and reset buttons', () => {
+    render(<FlashcardViewer flashcardSet={mockFlashcardSet} onReset={mockOnReset} />);
+    
+    const actionButtonsSection = screen.getByRole('button', { name: 'Export as CSV' }).closest('.action-buttons');
+    expect(actionButtonsSection).toBeInTheDocument();
+    
+    expect(screen.getByRole('button', { name: 'Export as CSV' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Export as JSON' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Create New Flashcards' })).toBeInTheDocument();
+  });
+
+  test('renders CSV export button', () => {
+    render(<FlashcardViewer flashcardSet={mockFlashcardSet} onReset={mockOnReset} />);
+    
+    const exportCSVButton = screen.getByRole('button', { name: 'Export as CSV' });
+    expect(exportCSVButton).toBeInTheDocument();
+    expect(exportCSVButton).toHaveClass('export-btn');
+  });
+
+  test('renders JSON export button', () => {
+    render(<FlashcardViewer flashcardSet={mockFlashcardSet} onReset={mockOnReset} />);
+    
+    const exportJSONButton = screen.getByRole('button', { name: 'Export as JSON' });
+    expect(exportJSONButton).toBeInTheDocument();
+    expect(exportJSONButton).toHaveClass('export-btn');
   });
 });

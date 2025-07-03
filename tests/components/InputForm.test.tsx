@@ -1,15 +1,24 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import InputForm from '../../src/components/InputForm';
-import { extractFlashcards } from '../../src/services/openaiService';
+import { extractFlashcards } from '../../src/services/llmService';
 import { fetchWikipediaContent } from '../../src/services/wikipediaService';
+import { getLLMConfig } from '../../src/config';
 
-jest.mock('../../src/services/openaiService', () => ({
+jest.mock('../../src/services/llmService', () => ({
   extractFlashcards: jest.fn()
 }));
 
 jest.mock('../../src/services/wikipediaService', () => ({
   fetchWikipediaContent: jest.fn()
+}));
+
+jest.mock('../../src/config', () => ({
+  getLLMConfig: jest.fn().mockReturnValue({
+    baseUrl: 'http://test-api.com',
+    model: 'test-model',
+    defaultApiKey: 'default-test-key'
+  })
 }));
 
 const mockExtractFlashcards = extractFlashcards as jest.MockedFunction<typeof extractFlashcards>;
@@ -35,7 +44,7 @@ describe('InputForm Component', () => {
 
     expect(screen.getByRole('button', { name: 'Wikipedia URL' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Generate Flashcards' })).toBeInTheDocument();
-    expect(screen.getByLabelText('OpenAI API Key')).toBeInTheDocument();
+    expect(screen.getByText('🚀 Fast Mock Mode')).toBeInTheDocument();
   });
 
   test('switches between URL and text input modes', () => {
@@ -75,7 +84,13 @@ describe('InputForm Component', () => {
     expect(mockSetError).toHaveBeenCalledWith('Please enter a Wikipedia URL or text');
   });
 
-  test('shows error when submitting without API key', async () => {
+  test('shows error when API key is missing in config', async () => {
+    (getLLMConfig as jest.Mock).mockReturnValueOnce({
+      baseUrl: 'http://test-api.com',
+      model: 'test-model',
+      defaultApiKey: ''
+    });
+    
     render(
       <InputForm
         setFlashcardSet={mockSetFlashcardSet}
@@ -90,7 +105,7 @@ describe('InputForm Component', () => {
     const submitButton = screen.getByRole('button', { name: 'Generate Flashcards' });
     fireEvent.click(submitButton);
 
-    expect(mockSetError).toHaveBeenCalledWith('Please enter your OpenAI API key');
+    expect(mockSetError).toHaveBeenCalledWith('Please set your API key in LLM Settings');
   });
 
   test('processes Wikipedia URL input correctly', async () => {
@@ -117,9 +132,6 @@ describe('InputForm Component', () => {
     const urlInput = screen.getByPlaceholderText('https://en.wikipedia.org/wiki/Artificial_intelligence');
     fireEvent.change(urlInput, { target: { value: 'https://en.wikipedia.org/wiki/React_(JavaScript_library)' } });
 
-    const apiKeyInput = screen.getByLabelText('OpenAI API Key');
-    fireEvent.change(apiKeyInput, { target: { value: 'test-api-key' } });
-
     const submitButton = screen.getByRole('button', { name: 'Generate Flashcards' });
     fireEvent.click(submitButton);
 
@@ -127,7 +139,7 @@ describe('InputForm Component', () => {
 
     await waitFor(() => {
       expect(mockFetchWikipediaContent).toHaveBeenCalledWith('https://en.wikipedia.org/wiki/React_(JavaScript_library)');
-      expect(mockExtractFlashcards).toHaveBeenCalledWith(mockWikiContent.content, 'test-api-key');
+      expect(mockExtractFlashcards).toHaveBeenCalledWith(mockWikiContent.content, undefined, expect.any(Boolean));
       expect(mockSetFlashcardSet).toHaveBeenCalledWith(expect.objectContaining({
         source: 'https://en.wikipedia.org/wiki/React_(JavaScript_library)',
         cards: mockFlashcards
