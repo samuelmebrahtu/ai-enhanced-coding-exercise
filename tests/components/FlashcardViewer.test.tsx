@@ -143,19 +143,128 @@ describe('FlashcardViewer Component', () => {
     expect(exportJSONButton).toBeInTheDocument();
     expect(exportJSONButton).toHaveClass('export-btn');
   });
-
-  // Test that export buttons are present but don't test actual export functionality
-  // which requires complex DOM mocking that's causing issues in the test environment
-  test('has CSV export button', () => {
+  
+  test('exports flashcards as CSV when CSV button is clicked', () => {
+    // Setup spies for DOM methods
+    const createElementSpy = jest.spyOn(document, 'createElement');
+    const appendChildSpy = jest.spyOn(document.body, 'appendChild');
+    const removeChildSpy = jest.spyOn(document.body, 'removeChild');
+    
+    // Mock Blob constructor for this test only
+    const originalBlob = global.Blob;
+    global.Blob = jest.fn().mockImplementation((content, options) => ({
+      content,
+      options,
+    }));
+    
+    // Render component and click export button
     render(<FlashcardViewer flashcardSet={mockFlashcardSet} onReset={mockOnReset} />);
     const exportCSVButton = screen.getByRole('button', { name: 'Export as CSV' });
-    expect(exportCSVButton).toBeInTheDocument();
+    fireEvent.click(exportCSVButton);
+    
+    // Verify Blob was created with correct CSV content
+    expect(global.Blob).toHaveBeenCalledWith(
+      [
+        '"Question","Answer"\n"Question 1","Answer 1"\n"Question 2","Answer 2"\n"Question 3","Answer 3"'
+      ],
+      { type: 'text/csv;charset=utf-8;' }
+    );
+    
+    // Verify URL.createObjectURL was called
+    expect(URL.createObjectURL).toHaveBeenCalled();
+    
+    // Verify link element was created
+    expect(createElementSpy).toHaveBeenCalledWith('a');
+    
+    // Verify DOM manipulation occurred
+    expect(appendChildSpy).toHaveBeenCalled();
+    expect(removeChildSpy).toHaveBeenCalled();
+    
+    // Clean up spies and mocks
+    createElementSpy.mockRestore();
+    appendChildSpy.mockRestore();
+    removeChildSpy.mockRestore();
+    global.Blob = originalBlob;
   });
   
-  test('has JSON export button', () => {
+  test('exports flashcards as JSON when JSON button is clicked', () => {
+    // Setup spies for DOM methods
+    const createElementSpy = jest.spyOn(document, 'createElement');
+    const appendChildSpy = jest.spyOn(document.body, 'appendChild');
+    const removeChildSpy = jest.spyOn(document.body, 'removeChild');
+    
+    // Mock Blob constructor for this test only
+    const originalBlob = global.Blob;
+    global.Blob = jest.fn().mockImplementation((content, options) => ({
+      content,
+      options,
+    }));
+    
+    // Render component and click export button
     render(<FlashcardViewer flashcardSet={mockFlashcardSet} onReset={mockOnReset} />);
     const exportJSONButton = screen.getByRole('button', { name: 'Export as JSON' });
-    expect(exportJSONButton).toBeInTheDocument();
+    fireEvent.click(exportJSONButton);
+    
+    // Expected JSON content
+    const expectedJSON = JSON.stringify(mockFlashcardSet, null, 2);
+    
+    // Verify Blob was created with correct JSON content
+    expect(global.Blob).toHaveBeenCalledWith(
+      [expectedJSON],
+      { type: 'application/json' }
+    );
+    
+    // Verify URL.createObjectURL was called
+    expect(URL.createObjectURL).toHaveBeenCalled();
+    
+    // Verify link element was created
+    expect(createElementSpy).toHaveBeenCalledWith('a');
+    
+    // Verify DOM manipulation occurred
+    expect(appendChildSpy).toHaveBeenCalled();
+    expect(removeChildSpy).toHaveBeenCalled();
+    
+    // Clean up spies and mocks
+    createElementSpy.mockRestore();
+    appendChildSpy.mockRestore();
+    removeChildSpy.mockRestore();
+    global.Blob = originalBlob;
+  });
+  
+  test('handles special characters in CSV export', () => {
+    // Create a flashcard set with special characters that need escaping in CSV
+    const specialCharFlashcardSet: FlashcardSet = {
+      title: 'Special Characters',
+      source: 'Test',
+      cards: [
+        { id: '1', question: 'Question with "quotes"', answer: 'Answer with, comma' },
+        { id: '2', question: 'Line\nbreak', answer: 'Tab\tcharacter' },
+      ],
+      createdAt: new Date(),
+    };
+    
+    // Mock Blob constructor for this test only
+    const originalBlob = global.Blob;
+    global.Blob = jest.fn().mockImplementation((content, options) => ({
+      content,
+      options,
+    }));
+    
+    // Render component and click export button
+    render(<FlashcardViewer flashcardSet={specialCharFlashcardSet} onReset={mockOnReset} />);
+    const exportCSVButton = screen.getByRole('button', { name: 'Export as CSV' });
+    fireEvent.click(exportCSVButton);
+    
+    // Verify Blob was created with properly escaped content
+    expect(global.Blob).toHaveBeenCalledWith(
+      [
+        '"Question","Answer"\n"Question with ""quotes""","Answer with, comma"\n"Line\nbreak","Tab\tcharacter"'
+      ],
+      { type: 'text/csv;charset=utf-8;' }
+    );
+    
+    // Clean up mocks
+    global.Blob = originalBlob;
   });
   
   test('disables previous button on first card', () => {
