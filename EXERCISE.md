@@ -41,6 +41,7 @@ Your task is to implement two new features:
 - An `Import JSON` button
 - An `Import CSV` button
 
+Use Windsurf to ask questions about the contents of the repository, if in doubt, don't hesitate to ask the trainer.
 
 Both buttons should be added to the initial input form and should direct users to the same viewer page used for displaying generated flashcards. Use Windsurf to assist with the implementation, but make sure to review and understand all generated code. Write tests for these new features, also using Windsurf where appropriate.
 
