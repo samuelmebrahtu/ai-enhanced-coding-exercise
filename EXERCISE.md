@@ -91,4 +91,4 @@ If you complete all parts of the exercise, experiment with additional features u
 - Support for additional export/import formats (e.g., YAML)
 - Any ideas for features you have!
 
-Another idea is to use your experiences in Parts 1 and 2, develop a plan to enhance the application's compatibility with Windsurf. Implement your improvements in the `.windsurfrules` file.
+Another idea is to use your experiences in Parts 1 and 2 and develop a plan to enhance the application's compatibility with Windsurf. Implement your improvements in the `.windsurfrules` file.
