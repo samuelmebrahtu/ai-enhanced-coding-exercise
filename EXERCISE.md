@@ -50,6 +50,15 @@ Focus your work on the following directories:
 - `src/styles`
 - `tests/components`
 
+Reminder of what a good AI workflow includes:
+- Familiarise yourself with the codebase structure. You can ask Windsurf to give you an overview.
+- Enable planning mode and toggle 'write' mode in Windsurf's Cascade Window.
+- In Cascade Window, Write the feature requirements. Use @folder to help Cascade determine the context. Ask to create an implementation plan and let you review it before proceeding.
+- Read through the plan, edit if needed, and when happy ask Cascade to implement the plan (if you edited the plan, mention it in the prompt)
+- See if the feature works as expected in the browser. You may want to paste any error messages into Cascade.
+- Have a read through the generated code. You can ask Cascade to explain anything you don't understand (select the lines in editor and hit ctrl/cmd + shift + L
+- If you haven't in the original plan, ask Cascade to write and run unit tests for the new functionality. They should all be passing.
+
 ### Part 2: AI Optimization Comparison
 
 After completing Part 1, save your changes and switch to the `ai-optimized` branch:
@@ -72,10 +81,6 @@ Implement the same features on this branch. As you work, document:
 - Where Windsurf performs better
 - Areas where Windsurf still faces challenges
 
-### Part 3: Windsurf Optimization
-
-Based on your experiences in Parts 1 and 2, develop a plan to enhance the application's compatibility with Windsurf. Implement your improvements in the `.windsurfrules` file.
-
 ### Stretch Goals
 
 If you complete all parts of the exercise, experiment with additional features using Windsurf. Remember to carefully review all AI-generated code rather than accepting it without scrutiny. Some feature ideas include:
@@ -85,3 +90,5 @@ If you complete all parts of the exercise, experiment with additional features u
 - Temperature control options for the LLM
 - Support for additional export/import formats (e.g., YAML)
 - Any ideas for features you have!
+
+Another idea is to use your experiences in Parts 1 and 2, develop a plan to enhance the application's compatibility with Windsurf. Implement your improvements in the `.windsurfrules` file.
