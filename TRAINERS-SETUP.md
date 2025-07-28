@@ -78,15 +78,9 @@
    - Set the model name to match the model you downloaded in LM Studio
    - (You can copy the exact name using the copy button next to the model name in LM Studio)
 
-2. Find your VPN IP address:
-   - Run the following command in your terminal:
-   ```bash
-   ifconfig | awk '/utun/{iface=$1} /inet /{print iface ": " $2}'
-   ```
-   - This will display localhost (127.0.0.1) and your VPN IP address
+> If you are just using it yourself locally. You can skip the next step and use http://localhost:1234/v1 as the inference server URL.
 
-3. Configure the inference server URL in your `.env` file:
-   ```
-   INFERENCE_SERVER_URL=http://YOUR_IP_ADDRESS:1234/v1
-   ```
-   - Example: `INFERENCE_SERVER_URL=http://10.0.0.26:1234/v1`
+2. Forward the localhost through ngrok (make sure to monitor the traffic) to get a public inference server URL
+  - You will need a ngrok account, afterwards you can follow the installation instructions on https://dashboard.ngrok.com/get-started
+  - You will need to run ngrok in a separate terminal and keep it running, to start it run `ngrok http localhost:1234`
+  - Use the URL that ngrok provides you with, it will look something like `https://<random-numbers>.ngrok-free.app` but your final url must include `/v1` at the end, so it should look like `https://<random-numbers>.ngrok-free.app/v1`
