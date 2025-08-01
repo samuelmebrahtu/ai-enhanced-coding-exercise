@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { extractFlashcards } from '../services/llmService';
 import { fetchWikipediaContent } from '../services/wikipediaService';
+import { parseJSONFile, parseCSVFile, validateFile } from '../services/importService';
 import { FlashcardSet } from '../types';
 import { getLLMConfig } from '../config';
 import { MockModeToggle } from './MockModeToggle';
@@ -16,6 +17,8 @@ const InputForm: React.FC<InputFormProps> = ({ setFlashcardSet, setLoading, setE
   const [isUrlInput, setIsUrlInput] = useState(true);
   const [input, setInput] = useState('');
   const [useMockMode, setUseMockMode] = useState(false);
+  const jsonFileInputRef = useRef<HTMLInputElement>(null);
+  const csvFileInputRef = useRef<HTMLInputElement>(null);
   
   useEffect(() => {
     const savedSetting = localStorage.getItem('use_mock_mode');
@@ -94,6 +97,58 @@ const InputForm: React.FC<InputFormProps> = ({ setFlashcardSet, setLoading, setE
     }
   };
 
+  const handleJSONImport = () => {
+    jsonFileInputRef.current?.click();
+  };
+
+  const handleCSVImport = () => {
+    csvFileInputRef.current?.click();
+  };
+
+  const handleJSONFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setError(null);
+    setLoading(true);
+
+    try {
+      validateFile(file, 'json');
+      const flashcardSet = await parseJSONFile(file);
+      setFlashcardSet(flashcardSet);
+    } catch (error) {
+      setError(`Import Error: ${error instanceof Error ? error.message : 'Unknown error occurred'}`);
+    } finally {
+      setLoading(false);
+      // Reset file input
+      if (jsonFileInputRef.current) {
+        jsonFileInputRef.current.value = '';
+      }
+    }
+  };
+
+  const handleCSVFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setError(null);
+    setLoading(true);
+
+    try {
+      validateFile(file, 'csv');
+      const flashcardSet = await parseCSVFile(file);
+      setFlashcardSet(flashcardSet);
+    } catch (error) {
+      setError(`Import Error: ${error instanceof Error ? error.message : 'Unknown error occurred'}`);
+    } finally {
+      setLoading(false);
+      // Reset file input
+      if (csvFileInputRef.current) {
+        csvFileInputRef.current.value = '';
+      }
+    }
+  };
+
   return (
     <div className="input-form-container">
       <form onSubmit={handleSubmit}>
@@ -113,6 +168,39 @@ const InputForm: React.FC<InputFormProps> = ({ setFlashcardSet, setLoading, setE
             Custom Text
           </button>
         </div>
+
+        <div className="import-buttons">
+          <button
+            type="button"
+            className="import-button json-import"
+            onClick={handleJSONImport}
+          >
+            📄 Import JSON
+          </button>
+          <button
+            type="button"
+            className="import-button csv-import"
+            onClick={handleCSVImport}
+          >
+            📊 Import CSV
+          </button>
+        </div>
+
+        {/* Hidden file inputs */}
+        <input
+          ref={jsonFileInputRef}
+          type="file"
+          accept=".json"
+          style={{ display: 'none' }}
+          onChange={handleJSONFileChange}
+        />
+        <input
+          ref={csvFileInputRef}
+          type="file"
+          accept=".csv"
+          style={{ display: 'none' }}
+          onChange={handleCSVFileChange}
+        />
 
         <div className="form-group">
           <label htmlFor="input">
