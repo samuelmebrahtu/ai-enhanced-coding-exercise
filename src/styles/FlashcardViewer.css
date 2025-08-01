@@ -1,9 +1,9 @@
 .flashcard-viewer {
   width: 100%;
   max-width: 800px;
-  background-color: white;
+  background-color: var(--card-bg-color);
   border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow);
   padding: 2rem;
 }
 
@@ -14,17 +14,17 @@
 
 .flashcard-header h2 {
   margin-bottom: 0.5rem;
-  color: #2c3e50;
+  color: var(--text-color);
 }
 
 .source {
-  color: #7f8c8d;
+  color: var(--text-secondary);
   margin-bottom: 0.5rem;
 }
 
 .card-count {
   font-weight: 500;
-  color: #3498db;
+  color: var(--button-primary);
 }
 
 .view-controls {
@@ -36,16 +36,16 @@
 .view-controls button {
   padding: 0.5rem 1rem;
   margin: 0 0.5rem;
-  border: 1px solid #3498db;
-  background-color: white;
-  color: #3498db;
+  border: 1px solid var(--button-primary);
+  background-color: var(--card-bg-color);
+  color: var(--button-primary);
   border-radius: 4px;
   cursor: pointer;
   transition: all 0.3s;
 }
 
 .view-controls button.active {
-  background-color: #3498db;
+  background-color: var(--button-primary);
   color: white;
 }
 
@@ -93,12 +93,12 @@
 }
 
 .flashcard-front {
-  background-color: #f8f9fa;
-  color: #2c3e50;
+  background-color: var(--flashcard-front-bg);
+  color: var(--text-color);
 }
 
 .flashcard-back {
-  background-color: #3498db;
+  background-color: var(--flashcard-back-bg);
   color: white;
   transform: rotateY(180deg);
 }

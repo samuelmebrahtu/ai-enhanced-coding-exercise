@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 import { getLLMConfig } from '../config';
 import { extractFlashcards } from '../services/llmService';
 import { fetchWikipediaContent } from '../services/wikipediaService';
+import { parseJSONFile, parseCSVFile, validateFile } from '../services/importService';
 import { FlashcardSet } from '../types';
 
 import { MockModeToggle } from './MockModeToggle';
@@ -18,6 +19,8 @@ const InputForm: React.FC<InputFormProps> = ({ setFlashcardSet, setLoading, setE
   const [isUrlInput, setIsUrlInput] = useState(true);
   const [input, setInput] = useState('');
   const [useMockMode, setUseMockMode] = useState(false);
+  const jsonFileInputRef = useRef<HTMLInputElement>(null);
+  const csvFileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const savedSetting = localStorage.getItem('use_mock_mode');
@@ -97,6 +100,58 @@ const InputForm: React.FC<InputFormProps> = ({ setFlashcardSet, setLoading, setE
     }
   };
 
+  const handleJSONImport = (): void => {
+    jsonFileInputRef.current?.click();
+  };
+
+  const handleCSVImport = (): void => {
+    csvFileInputRef.current?.click();
+  };
+
+  const handleJSONFileChange = async (event: React.ChangeEvent<HTMLInputElement>): Promise<void> => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setError(null);
+    setLoading(true);
+
+    try {
+      validateFile(file, 'json');
+      const flashcardSet = await parseJSONFile(file);
+      setFlashcardSet(flashcardSet);
+    } catch (error) {
+      setError(`Import Error: ${error instanceof Error ? error.message : 'Unknown error occurred'}`);
+    } finally {
+      setLoading(false);
+      // Reset file input
+      if (jsonFileInputRef.current) {
+        jsonFileInputRef.current.value = '';
+      }
+    }
+  };
+
+  const handleCSVFileChange = async (event: React.ChangeEvent<HTMLInputElement>): Promise<void> => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setError(null);
+    setLoading(true);
+
+    try {
+      validateFile(file, 'csv');
+      const flashcardSet = await parseCSVFile(file);
+      setFlashcardSet(flashcardSet);
+    } catch (error) {
+      setError(`Import Error: ${error instanceof Error ? error.message : 'Unknown error occurred'}`);
+    } finally {
+      setLoading(false);
+      // Reset file input
+      if (csvFileInputRef.current) {
+        csvFileInputRef.current.value = '';
+      }
+    }
+  };
+
   return (
     <div className="input-form-container">
       <form
@@ -142,6 +197,51 @@ const InputForm: React.FC<InputFormProps> = ({ setFlashcardSet, setLoading, setE
 
         <button className="submit-button" type="submit">Generate Flashcards</button>
       </form>
+      
+      <div className="import-section">
+        <div className="separator">
+          <span className="separator-line"></span>
+          <span className="separator-text">OR</span>
+          <span className="separator-line"></span>
+        </div>
+        
+        <div className="import-buttons">
+          <button
+            type="button"
+            className="import-button json-import"
+            onClick={handleJSONImport}
+          >
+            Import from JSON
+          </button>
+          <button
+            type="button"
+            className="import-button csv-import"
+            onClick={handleCSVImport}
+          >
+            Import from CSV
+          </button>
+        </div>
+        
+        {/* Hidden file inputs */}
+        <input
+          ref={jsonFileInputRef}
+          type="file"
+          accept=".json"
+          style={{ display: 'none' }}
+          onChange={(e): void => {
+            handleJSONFileChange(e).catch((_) => { /* Error handled in handleJSONFileChange */ });
+          }}
+        />
+        <input
+          ref={csvFileInputRef}
+          type="file"
+          accept=".csv"
+          style={{ display: 'none' }}
+          onChange={(e): void => {
+            handleCSVFileChange(e).catch((_) => { /* Error handled in handleCSVFileChange */ });
+          }}
+        />
+      </div>
     </div>
   );
 };

@@ -8,17 +8,29 @@
 }
 
 header {
-  text-align: center;
   margin-bottom: 2rem;
 }
 
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.header-text {
+  text-align: center;
+  flex: 1;
+}
+
 header h1 {
-  color: #2c3e50;
+  color: var(--text-color);
   margin-bottom: 0.5rem;
 }
 
 header p {
-  color: #7f8c8d;
+  color: var(--text-secondary);
 }
 
 main {
@@ -31,14 +43,14 @@ main {
 .loader {
   margin-top: 2rem;
   font-size: 1.2rem;
-  color: #3498db;
+  color: var(--button-primary);
 }
 
 .error {
   margin-top: 1rem;
   padding: 1rem;
-  background-color: #ffebee;
-  color: #e53935;
+  background-color: var(--error-bg);
+  color: var(--error-text);
   border-radius: 4px;
   width: 100%;
   max-width: 600px;
